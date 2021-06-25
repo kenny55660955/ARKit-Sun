@@ -52,7 +52,20 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        <#code#>
+        if let touch = touches.first {
+            let touchLocation = touch.location(in: sceneView)
+            
+            guard let query = sceneView.raycastQuery(from: touchLocation, allowing: .existingPlaneInfinite, alignment: .any) else { return }
+            
+            let result = sceneView.session.raycast(query)
+            
+            if let hitTestResult = result.first {
+                print(hitTestResult)
+            }
+            
+            
+            
+        }
     }
     
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
