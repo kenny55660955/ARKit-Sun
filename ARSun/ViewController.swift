@@ -10,33 +10,36 @@ import SceneKit
 import ARKit
 
 class ViewController: UIViewController, ARSCNViewDelegate {
-
+    
+    // MARK: - Properties
     @IBOutlet var sceneView: ARSCNView!
     
+    // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Set the view's delegate
         sceneView.delegate = self
         
-        // Show statistics such as fps and timing information
-        sceneView.showsStatistics = true
-        
-        // Create a new scene
-        let scene = SCNScene(named: "art.scnassets/ship.scn")!
-        
-        // Set the scene to the view
-        sceneView.scene = scene
+        creatCube()
+//        // Create a new scene
+//        let scene = SCNScene(named: "art.scnassets/ship.scn")!
+//
+//        // Set the scene to the view
+//        sceneView.scene = scene
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        // Create a session configuration
-        let configuration = ARWorldTrackingConfiguration()
+        if ARWorldTrackingConfiguration.isSupported {
+            // Create a session configuration
+            let configuration = ARWorldTrackingConfiguration()
 
-        // Run the view's session
-        sceneView.session.run(configuration)
+            // Run the view's session
+            sceneView.session.run(configuration)
+        }
+       
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -45,30 +48,27 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Pause the view's session
         sceneView.session.pause()
     }
+    
+    // MARK: - Methods
+    private func creatCube() {
+        
+        let sphere = SCNSphere(radius: 0.2)
+        
+        let meterial = SCNMaterial()
+        
+        meterial.diffuse.contents = UIImage(named: "art.scnassets/sun.jpeg")
+        
+        sphere.materials = [meterial]
 
-    // MARK: - ARSCNViewDelegate
-    
-/*
-    // Override to create and configure nodes for anchors added to the view's session.
-    func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
         let node = SCNNode()
-     
-        return node
-    }
-*/
-    
-    func session(_ session: ARSession, didFailWithError error: Error) {
-        // Present an error message to the user
+
+        node.position = SCNVector3(0, 0.1, -0.5)
+
+        node.geometry = sphere
+
+        sceneView.scene.rootNode.addChildNode(node)
         
-    }
-    
-    func sessionWasInterrupted(_ session: ARSession) {
-        // Inform the user that the session has been interrupted, for example, by presenting an overlay
-        
-    }
-    
-    func sessionInterruptionEnded(_ session: ARSession) {
-        // Reset tracking and/or remove existing anchors if consistent tracking is required
-        
+        // 陰影效果
+        sceneView.autoresizesSubviews = true
     }
 }
